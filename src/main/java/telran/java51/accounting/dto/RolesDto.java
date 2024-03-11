@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Singular;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class RolesDto {
 	String login;

@@ -6,6 +6,7 @@ import telran.java51.accounting.dto.UserEditDto;
 import telran.java51.accounting.dto.UserRegisterDto;
 
 public interface UserAccountService {
+
 	UserDto register(UserRegisterDto userRegisterDto);
 
 	UserDto getUser(String login);
