@@ -12,4 +12,11 @@ public class PostNotFoundException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = -3132868072694294643L;
 
+	public PostNotFoundException() {
+		super("Post not found");
+	}
+
+	public PostNotFoundException(String postId) {
+		super("Post" + postId + " not found");
+	}
 }

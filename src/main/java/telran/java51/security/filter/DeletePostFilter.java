@@ -1,7 +1,6 @@
 package telran.java51.security.filter;
 
 import java.io.IOException;
-import java.security.Principal;
 
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -14,10 +13,17 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import telran.java51.post.dao.PostRepository;
+import telran.java51.post.model.Post;
+import telran.java51.security.model.User;
 
 @Component
-@Order(30)
-public class UpdateByOwnerFilter implements Filter {
+@RequiredArgsConstructor
+@Order(60)
+public class DeletePostFilter implements Filter {
+
+	final PostRepository postRepository;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -25,22 +31,25 @@ public class UpdateByOwnerFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (checkEndPoint(request.getMethod(), request.getServletPath())) {
-			Principal principal = request.getUserPrincipal();
+			User user = (User) request.getUserPrincipal();
 			String[] arr = request.getServletPath().split("/");
-			String user = arr[arr.length - 1];
-			if (!principal.getName().equalsIgnoreCase(user)) {
+			String postId = arr[arr.length - 1];
+			Post post = postRepository.findById(postId).orElse(null);
+			if (post == null) {
+				response.sendError(404);
+				return;
+			}
+			if (!(user.getName().equals(post.getAuthor()) || user.getRoles().contains("MODERATOR"))) {
 				response.sendError(403);
 				return;
 			}
 		}
 		chain.doFilter(request, response);
-
 	}
 
 	private boolean checkEndPoint(String method, String path) {
-		return (HttpMethod.PUT.matches(method) && path.matches("/account/user/\\w+"))
-				|| (HttpMethod.POST.matches(method) && path.matches("/forum/post/\\w+"))
-				|| (HttpMethod.PUT.matches(method) && path.matches("/forum/post/\\w+/comment/\\w+"));
+		return HttpMethod.DELETE.matches(method) && path.matches("/forum/post/\\w+");
+
 	}
 
 }
