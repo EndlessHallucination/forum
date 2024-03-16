@@ -3,6 +3,7 @@ package telran.java51.accounting.controller;
 import java.security.Principal;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,9 +34,9 @@ public class UserAccountController {
 		return userAccountService.register(userRegisterDto);
 	}
 
-	@PostMapping
-	public UserDto login(Principal principal) {
-		return userAccountService.getUser(principal.getName());
+	@PostMapping("/login")
+	public UserDto login(Authentication authentication) {
+		return userAccountService.getUser(authentication.getName());
 	}
 
 	@GetMapping("/user/{login}")
