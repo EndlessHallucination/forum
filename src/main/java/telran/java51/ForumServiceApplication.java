@@ -1,4 +1,4 @@
-package telran.java51;
+ package telran.java51;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
